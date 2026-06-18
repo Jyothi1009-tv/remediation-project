@@ -18,8 +18,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
-    <java.version>21</java.version>
-            
+    <java.version>21</java.version> 
     <spring.boot.version>2.5.4</spring.boot.version>
   </properties>
   <dependencies>
@@ -32,10 +31,8 @@
   </dependencies>
       
   <modules>
-  <module>app-common</module>
-                      
+    <module>app-common</module>                  
     <module>app-service</module>
-            
     <module>app-api</module>
           
   </modules>

@@ -6,11 +6,11 @@
    
     <parent>
         <groupId>com.ai.oss.vulnerabilities</groupId>
-	<artifactId>remediation-project</artifactId>
+    	<artifactId>remediation-project</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>app-common</artifactId>
-
+      <relativePath>../pom.xml</relativePath>
     <dependencies>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
