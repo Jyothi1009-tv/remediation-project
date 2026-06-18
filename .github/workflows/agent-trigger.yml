@@ -29,6 +29,8 @@ jobs:
           # Example: using bash to execute the logic described in the prompt
           COMMIT_ID=$(git rev-parse --short HEAD)
           BRANCH_NAME="feature/main-$COMMIT_ID"
+          git config --global user.email "agent@automation.com"
+          git config --global user.name "OSS agent"
           git checkout -b $BRANCH_NAME
           mvn clean install
           git add .
