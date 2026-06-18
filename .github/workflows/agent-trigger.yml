@@ -32,10 +32,12 @@ jobs:
           git checkout -b $BRANCH_NAME
           mvn org.owasp:dependency-check-maven:check \
             -DnvdApiKey=$NVD_API_KEY \
-            -DnvdApiDelay=16000 \
+            -DnvdApiDelay=20000 \
             -DnvdMaxRetryCount=10 \
-            -DossindexAnalyzerEnabled=true \
             -DfailOnError=false \
+            -DnvdDataConfig=false \
+            -DossindexAnalyzerEnabled=true \
+            -DcentralAnalyzerEnabled=true \
             -Dformat=HTML \
             -DoutputDirectory=./vulnerability-reports
           git add .
