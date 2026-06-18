@@ -23,13 +23,21 @@ jobs:
       - name: Run Discovery Agent
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NVD_API_KEY: 'D231509C-B765-F111-836C-0EBF96DE670D'
         run: |
           # This is where your AI Agent (or a script following the prompt) runs
           # Example: using bash to execute the logic described in the prompt
           COMMIT_ID=$(git rev-parse --short HEAD)
           BRANCH_NAME="feature/main-$COMMIT_ID"
           git checkout -b $BRANCH_NAME
-          mvn org.owasp:dependency-check-maven:check
+          mvn org.owasp:dependency-check-maven:check \
+            -DnvdApiKey=$NVD_API_KEY \
+            -DnvdApiDelay=16000 \
+            -DnvdMaxRetryCount=10 \
+            -DossindexAnalyzerEnabled=true \
+            -DfailOnError=false \
+            -Dformat=HTML \
+            -DoutputDirectory=./vulnerability-reports
           git add .
           git commit -m "Agent 1: Vulnerability Assessment Report"
           git push origin $BRANCH_NAME
