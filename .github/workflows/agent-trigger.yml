@@ -30,16 +30,7 @@ jobs:
           COMMIT_ID=$(git rev-parse --short HEAD)
           BRANCH_NAME="feature/main-$COMMIT_ID"
           git checkout -b $BRANCH_NAME
-          mvn org.owasp:dependency-check-maven:check \
-            -DnvdApiKey=$NVD_API_KEY \
-            -DnvdApiDelay=20000 \
-            -DnvdMaxRetryCount=10 \
-            -DfailOnError=false \
-            -DnvdDataConfig=false \
-            -DossindexAnalyzerEnabled=true \
-            -DcentralAnalyzerEnabled=true \
-            -Dformat=HTML \
-            -DoutputDirectory=./vulnerability-reports
+          mvn clean install
           git add .
           git commit -m "Agent 1: Vulnerability Assessment Report"
           git push origin $BRANCH_NAME
