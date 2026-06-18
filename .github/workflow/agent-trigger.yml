@@ -1,0 +1,30 @@
+name: OSS Upgrade Agent                                                                                     
+on:
+  workflow_dispatch:
+  schedule:
+   -cron: '0 2 * * *' #daily run and 2AM
+  #push:
+   # branches: [ main ]
+
+jobs:
+  discovery:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Load Agent Prompt
+        id: prompt
+        run: echo "PROMPT=$(cat .agents/AGENT_1_DISCOVERY.md)" >> $GITHUB_ENV
+      
+      - name: Run Discovery Agent
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # This is where your AI Agent (or a script following the prompt) runs
+          # Example: using bash to execute the logic described in the prompt
+          COMMIT_ID=$(git rev-parse --short HEAD)
+          BRANCH_NAME="feature/main-$COMMIT_ID"
+          git checkout -b $BRANCH_NAME
+          mvn org.owasp:dependency-check-maven:check
+          git add .
+          git commit -m "Agent 1: Vulnerability Assessment Report"
+          git push origin $BRANCH_NAME
