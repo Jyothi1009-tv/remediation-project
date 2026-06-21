@@ -1,41 +1,41 @@
-name: OSS Upgrade Agent (Discovery & PR Creation)
-
+name: OSS Upgrade Agent                                                                                     
 on:
+  #workflow_dispatch:
+  #schedule:
+   #-cron: '0 2 * * *' #daily run and 2AM
   push:
-    branches: [ main ] # Triggers on any push to main or master
-    
+    branches: [ main ]
+
 jobs:
-  agent-automation:
+  discovery:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write      # Required to push the feature branch
-      pull-requests: write # Required to create the Pull Request
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up JDK 11
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: 'maven'
-
-      - name: Load Agent Instructions
-        id: load_prompts
+      - uses: actions/checkout@v4
+      - name: Load Agent Prompt
+        id: prompt
         run: |
-          # Load Agent 1 (Discovery) instructions
-          echo "AGENT_1_PROMPT<<EOF" >> $GITHUB_ENV
+          # We use a unique delimiter (EOF) to tell GitHub where the string starts and ends
+          echo "PROMPT<<EOF" >> $GITHUB_ENV
           cat .agents/AGENT_1_DISCOVERY.md >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-          
-          # Load Agent 3 (PR Creation) instructions
-          echo "AGENT_3_PROMPT<<EOF" >> $GITHUB_ENV
-          cat .agents/AGENT_3_PR_CREATION.md >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+
+      
+      - name: Run Discovery Agent
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NVD_API_KEY: 'D231509C-B765-F111-836C-0EBF96DE670D'
+        run: |
+          # This is where your AI Agent (or a script following the prompt) runs
+          # Example: using bash to execute the logic described in the prompt
+          COMMIT_ID=$(git rev-parse --short HEAD)
+          BRANCH_NAME="feature/main-$COMMIT_ID"
+          git config --global user.email "agent@automation.com"
+          git config --global user.name "OSS agent"
+          git checkout -b $BRANCH_NAME
+          mvn clean install
+          git add .
+          git commit -m "Agent 1: Vulnerability Assessment Report"
+          git push origin $BRANCH_NAME
 
       - name: Agent 1: Discovery & Branch Preparation
         env:
