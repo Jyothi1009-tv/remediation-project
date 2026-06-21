@@ -45,9 +45,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "### Starting Agent 3: PR Creation Phase ###"
+          echo "### Starting Agent 3 PR Creation Phase ###"
           
-          PR_TITLE="Security: OSS Vulnerability Discovery [${{ env.BASE_BRANCH_NAME }}]"
+          PR_TITLE="Security OSS Vulnerability Discovery [${{ env.BASE_BRANCH_NAME }}]"
           
           PR_BODY="### Automated Dependency Report
           This Pull Request was generated automatically following a push to **${{ env.BASE_BRANCH_NAME }}**.
