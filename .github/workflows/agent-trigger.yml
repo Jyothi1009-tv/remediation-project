@@ -4,6 +4,8 @@ on:
   push:
     branches: [ main, master ] # Triggers on any push to main or develop
   workflow_dispatch: # Allows manual trigger for testing
+   #schedule:
+   #-cron: '0 2 * * *' #daily run and 2AM disabled tempararily
 
 jobs:
   agent-automation:
