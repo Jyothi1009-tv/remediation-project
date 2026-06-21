@@ -26,13 +26,44 @@ jobs:
           NVD_API_KEY: 'D231509C-B765-F111-836C-0EBF96DE670D'
         run: |
           # This is where your AI Agent (or a script following the prompt) runs
-          # Example: using bash to execute the logic described in the prompt
+          # Example: using bash to execute the logic described in the prompt 
+          BASE_BRANCH=${GITHUB_REF_NAME}
           COMMIT_ID=$(git rev-parse --short HEAD)
-          BRANCH_NAME="feature/main-$COMMIT_ID"
+          BRANCH_NAME="feature/${BASE_BRANCH}-${COMMIT_ID}"        
           git config --global user.email "agent@automation.com"
           git config --global user.name "OSS agent"
           git checkout -b $BRANCH_NAME
           mvn clean install
-          git add .
+          git add .   
           git commit -m "Agent 1: Vulnerability Assessment Report"
           git push origin $BRANCH_NAME
+           # Export variables for Agent 3
+          echo "BASE_BRANCH_NAME=$BASE_BRANCH" >> $GITHUB_ENV
+          echo "CURRENT_FEATURE_BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
+
+      - name: Agent 3: Pull Request Creation
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "### Starting Agent 3: PR Creation Phase ###"
+          
+          PR_TITLE="Security: OSS Vulnerability Discovery [${{ env.BASE_BRANCH_NAME }}]"
+          
+          PR_BODY="### Automated Dependency Report
+          This Pull Request was generated automatically following a push to **${{ env.BASE_BRANCH_NAME }}**.
+
+          **Details:**
+          - **Origin Branch:** ${{ env.BASE_BRANCH_NAME }}
+          - **Feature Branch:** ${{ env.CURRENT_FEATURE_BRANCH }}
+          - **Status:** Agent 1 has successfully generated a vulnerability report.
+          
+          *Please review the 'vulnerability-reports' directory in this branch for the full findings. *"
+
+          # Use GitHub CLI (gh) to create the PR pointing back to the dynamic base branch
+          gh pr create \
+            --base ${{ env.BASE_BRANCH_NAME }} \
+            --head ${{ env.CURRENT_FEATURE_BRANCH }} \
+            --title "$PR_TITLE" \
+            --body "$PR_BODY" \
+            --label "security" \
+            --label "automated-agent"
