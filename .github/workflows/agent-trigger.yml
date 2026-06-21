@@ -10,7 +10,7 @@ jobs:
   discovery:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       - name: Load Agent Prompt
         id: prompt
         run: |
@@ -36,72 +36,3 @@ jobs:
           git add .
           git commit -m "Agent 1: Vulnerability Assessment Report"
           git push origin $BRANCH_NAME
-
-      - name: Agent 1: Discovery & Branch Preparation
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Ensure this key is in your Repo Secrets
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }} 
-        run: |
-          echo "### Starting Agent 1: Discovery Phase ###"
-          
-          # DYNAMIC VARIABLES
-          BASE_BRANCH=${GITHUB_REF_NAME}
-          COMMIT_ID=$(git rev-parse --short HEAD)
-          BRANCH_NAME="feature/${BASE_BRANCH}-${COMMIT_ID}"
-          
-          echo "Working from Base Branch: $BASE_BRANCH"
-          echo "Creating Workspace Branch: $BRANCH_NAME"
-
-          # Git Identity Setup
-          git config --global user.email "agent@automation.com"
-          git config --global user.name "OSS Discovery Agent"
-          git checkout -b $BRANCH_NAME
-
-          # 1. Build Multi-Module Project (ensures internal artifacts are resolved)
-          mvn clean install -DskipTests -am
-
-          # 2. Run Vulnerability Scan with Stability & Fallback Flags
-          mvn org.owasp:dependency-check-maven:check \
-            -DnvdApiKey=$NVD_API_KEY \
-            -DnvdApiDelay=16000 \
-            -DfailOnError=false \
-            -DossindexAnalyzerEnabled=true \
-            -Dformat=HTML \
-            -DoutputDirectory=./vulnerability-reports
-
-          # 3. Commit and Push the Workspace Branch
-          git add .
-          git commit -m "Agent 1: Vulnerability Report for commit $COMMIT_ID"
-          git push origin $BRANCH_NAME
-          
-          # Export variables for Agent 3
-          echo "BASE_BRANCH_NAME=$BASE_BRANCH" >> $GITHUB_ENV
-          echo "CURRENT_FEATURE_BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
-
-      - name: Agent 3: Pull Request Creation
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "### Starting Agent 3: PR Creation Phase ###"
-          
-          PR_TITLE="Security: OSS Vulnerability Discovery [${{ env.BASE_BRANCH_NAME }}]"
-          
-          PR_BODY="### Automated Dependency Report
-          This Pull Request was generated automatically following a push to **${{ env.BASE_BRANCH_NAME }}**.
-
-          **Details:**
-          - **Origin Branch:** ${{ env.BASE_BRANCH_NAME }}
-          - **Feature Branch:** ${{ env.CURRENT_FEATURE_BRANCH }}
-          - **Status:** Agent 1 has successfully generated a vulnerability report.
-          
-          *Please review the 'vulnerability-reports' directory in this branch for the full findings. *"
-
-          # Use GitHub CLI (gh) to create the PR pointing back to the dynamic base branch
-          gh pr create \
-            --base ${{ env.BASE_BRANCH_NAME }} \
-            --head ${{ env.CURRENT_FEATURE_BRANCH }} \
-            --title "$PR_TITLE" \
-            --body "$PR_BODY" \
-            --label "security" \
-            --label "automated-agent"
