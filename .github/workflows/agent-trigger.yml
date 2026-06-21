@@ -96,7 +96,7 @@ jobs:
           - **Feature Branch:** ${{ env.CURRENT_FEATURE_BRANCH }}
           - **Status:** Agent 1 has successfully generated a vulnerability report.
           
-          *Please review the 'vulnerability-reports' directory in this branch for the full findings.*"
+          *Please review the 'vulnerability-reports' directory in this branch for the full findings. *"
 
           # Use GitHub CLI (gh) to create the PR pointing back to the dynamic base branch
           gh pr create \
