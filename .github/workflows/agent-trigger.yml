@@ -41,7 +41,7 @@ jobs:
           echo "BASE_BRANCH_NAME=$BASE_BRANCH" >> $GITHUB_ENV
           echo "CURRENT_FEATURE_BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
 
-      - name: Agent 3: Pull Request Creation
+      - name: Agent 3 Pull Request Creation
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
