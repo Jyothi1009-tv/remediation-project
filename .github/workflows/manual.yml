@@ -35,6 +35,13 @@ jobs:
           echo "AGENT_3_PROMPT<<EOF" >> $GITHUB_ENV
           cat .agents/AGENT_3_PR_CREATION.md >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+      
+      - name: Run Snyk Analysis
+        uses: snyk/actions/maven@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
 
       - name: Agent 1: Discovery & Branch Preparation
         env:
@@ -59,7 +66,7 @@ jobs:
 
           # 1. Build Multi-Module Project (ensures internal artifacts are resolved)
           mvn clean install -DskipTests -am
-
+          
           # 2. Run Vulnerability Scan with Stability & Fallback Flags
           mvn org.owasp:dependency-check-maven:check \
             -DnvdApiKey=$NVD_API_KEY \
@@ -78,11 +85,11 @@ jobs:
           echo "BASE_BRANCH_NAME=$BASE_BRANCH" >> $GITHUB_ENV
           echo "CURRENT_FEATURE_BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
 
-      - name: Agent 3: Pull Request Creation
+      - name: Agent 3 Pull Request Creation
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "### Starting Agent 3: PR Creation Phase ###"
+          echo "### Starting Agent 3 PR Creation Phase ###"
           
           PR_TITLE="Security: OSS Vulnerability Discovery [${{ env.BASE_BRANCH_NAME }}]"
           
@@ -101,6 +108,4 @@ jobs:
             --base ${{ env.BASE_BRANCH_NAME }} \
             --head ${{ env.CURRENT_FEATURE_BRANCH }} \
             --title "$PR_TITLE" \
-            --body "$PR_BODY" \
-            --label "security" \
-            --label "automated-agent"
+            --body "$PR_BODY"

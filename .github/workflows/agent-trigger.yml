@@ -64,6 +64,4 @@ jobs:
             --base ${{ env.BASE_BRANCH_NAME }} \
             --head ${{ env.CURRENT_FEATURE_BRANCH }} \
             --title "$PR_TITLE" \
-            --body "$PR_BODY" \
-            --label "security" \
-            --label "automated-agent"
+            --body "$PR_BODY"
