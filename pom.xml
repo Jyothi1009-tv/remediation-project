@@ -16,9 +16,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-    <java.version>11</java.version> 
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <java.version>17</java.version> 
     <spring.boot.version>2.5.4</spring.boot.version>
   </properties>
   <dependencies>
@@ -82,39 +82,34 @@
       </plugins>
     </pluginManagement>
   
-  <!--<plugins>
-     
-                  
-      <plugin>
-                        
-        <groupId>org.owasp</groupId>
-                        
+  <plugins>       
+      <plugin>             
+        <groupId>org.owasp</groupId>          
         <artifactId>dependency-check-maven</artifactId>
-                        
         <version>12.1.0</version>
-                        
-  
         <configuration>
-                  <nvdApiEndpoint>https://services.nvd.nist.gov/rest/json/cves/2.0</nvdApiEndpoint>            
+                 <!-- <nvdApiEndpoint>https://services.nvd.nist.gov/rest/json/cves/2.0</nvdApiEndpoint>            
           <nvdApiKey>{env.NVD_API_KEY}</nvdApiKey>
-          <knownExploitedUrl>https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json</knownExploitedUrl>
-                           
-        </configuration>
-                        
+          <knownExploitedUrl>https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json</knownExploitedUrl> -->
+            <dataDirectory>/home/nagajyothi_bheema/remediation-project/nvdFiles</dataDirectory>
+            <autoUpdate>false</autoUpdate>     
+            <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>      
+            <formats>
+            <format>HTML</format>
+            <format>JSON</format>
+            <format>CSV</format>
+            </formats>
+            <outputDirectory>${project.build.directory}/dependency-check</outputDirectory>
+            <reportFileName>dependency-check-${project.groupId}</reportFileName>
+        </configuration>           
         <executions>
-                              
-          <execution>
-                                    
-            <goals>
-                                          
-              <goal>check</goal>
-                                      
-            </goals>
-                                
-          </execution>
-                          
+            <execution>                            
+            <goals>                   
+              <goal>check</goal>                   
+            </goals>  
+          </execution>      
         </executions>
                 </plugin>        
-              </plugins>-->
+              </plugins>
               </build>
 </project>
