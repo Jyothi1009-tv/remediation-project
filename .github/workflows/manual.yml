@@ -1,7 +1,7 @@
 name:  Manual OSS Upgrade Agent (Discovery & PR Creation)
 
 on:
-  workflow_dispatch:
+  #workflow_dispatch:
     
 jobs:
   agent-automation:
