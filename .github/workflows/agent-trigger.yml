@@ -2,7 +2,7 @@ name: OSS Upgrade Agent
 on:
   #workflow_dispatch:
   schedule:
-    -cron: '0 2 * * *' #daily run at 2AM
+    - cron: '0 2 * * *' #daily run at 2AM
   push:
     branches: [ main ]
 
