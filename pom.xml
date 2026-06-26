@@ -91,10 +91,11 @@
                  <!-- <nvdApiEndpoint>https://services.nvd.nist.gov/rest/json/cves/2.0</nvdApiEndpoint>            
           <nvdApiKey>{env.NVD_API_KEY}</nvdApiKey>
           <knownExploitedUrl>https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json</knownExploitedUrl> 
-          --> <!--<dataDirectory>/home/nagajyothi_bheema/remediation-project/nvdFiles</dataDirectory>-->
-        <!-- <dataDirectory>${project.directory}/nvdFiles</dataDirectory>-->
+          --> 
+  <!-- <dataDirectory>${project.directory}/nvdFiles</dataDirectory>
+          <dataDirectory>/home/nagajyothi_bheema/remediation-project/nvdFiles</dataDirectory>-->
           <dataDirectory>${env.GITHUB_WORKSPACE}/nvdFiles</dataDirectory>
-
+            <aggregate>true</aggregate>
             <autoUpdate>false</autoUpdate>     
             <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>      
             <formats>
@@ -102,9 +103,9 @@
             <format>JSON</format>
             <format>CSV</format>
             </formats>
-            <outputDirectory>${project.build.directory}/dependency-check</outputDirectory>
-            <reportFileName>dependency-check-${project.groupId}</reportFileName>
-        </configuration>           
+            <outputDirectory>${project.build.directory}/dependency-check/${project.artifactId}</outputDirectory>
+            </configuration>
+           
         <executions>
             <execution>                            
             <goals>                   
@@ -112,7 +113,7 @@
             </goals>  
           </execution>      
         </executions>
-                </plugin>        
+      </plugin>        
               </plugins>
               </build>
 </project>

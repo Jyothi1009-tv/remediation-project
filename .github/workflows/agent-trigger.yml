@@ -42,6 +42,8 @@ jobs:
           git config --global user.name "OSS agent"
           git checkout -b $BRANCH_NAME
           mvn clean install
+          mvn verify org.owasp:dependency-check-maven:check
+          mv target/dependency-check-report/* reports/owasp/
           git add .  
           git commit -m "Agent 1: Vulnerability Assessment Report"
           git push origin $BRANCH_NAME
