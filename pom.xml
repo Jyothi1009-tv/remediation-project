@@ -83,15 +83,18 @@
     </pluginManagement>
   
   <plugins>       
-     <!-- <plugin>             
+      <plugin>             
         <groupId>org.owasp</groupId>          
         <artifactId>dependency-check-maven</artifactId>
         <version>12.1.0</version>
-        <configuration>-->
+        <configuration>
                  <!-- <nvdApiEndpoint>https://services.nvd.nist.gov/rest/json/cves/2.0</nvdApiEndpoint>            
           <nvdApiKey>{env.NVD_API_KEY}</nvdApiKey>
           <knownExploitedUrl>https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json</knownExploitedUrl> 
-            <dataDirectory>${project}/nvdFiles</dataDirectory>
+          --> <!--<dataDirectory>/home/nagajyothi_bheema/remediation-project/nvdFiles</dataDirectory>-->
+        <!-- <dataDirectory>${project.directory}/nvdFiles</dataDirectory>-->
+          <dataDirectory>${env.GITHUB_WORKSPACE}/nvdFiles</dataDirectory>
+
             <autoUpdate>false</autoUpdate>     
             <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>      
             <formats>
@@ -109,7 +112,7 @@
             </goals>  
           </execution>      
         </executions>
-                </plugin>-->        
+                </plugin>        
               </plugins>
               </build>
 </project>

@@ -1,8 +1,8 @@
 name: OSS Upgrade Agent                                                                                     
 on:
   #workflow_dispatch:
-  #schedule:
-   #-cron: '0 2 * * *' #daily run and 2AM
+  schedule:
+    -cron: '0 2 * * *' #daily run at 2AM
   push:
     branches: [ main ]
 
@@ -19,7 +19,15 @@ jobs:
           cat .agents/AGENT_1_DISCOVERY.md >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      
+      - name: Cache dependency-check data
+        uses: actions/cache@v3
+        with:
+          path: ~/.dependency-check
+          key: depcheck-${{ runner.os }}
+          
+      - name: Create dependency-check directory
+        run: mkdir -p $GITHUB_WORKSPACE/nvdFiles
+
       - name: Run Discovery Agent
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
