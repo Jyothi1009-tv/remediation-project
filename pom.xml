@@ -95,7 +95,7 @@
           <!-- <dataDirectory>${project.directory}/nvdFiles</dataDirectory>-->
           <dataDirectory>/home/nagajyothi_bheema/remediation-project/nvdFiles</dataDirectory>
        <!--   <dataDirectory>${env.GITHUB_WORKSPACE}/nvdFiles</dataDirectory>-->
-            <aggregate>true</aggregate>
+          
             <autoUpdate>false</autoUpdate>     
             <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>      
             <formats>

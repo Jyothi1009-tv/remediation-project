@@ -62,9 +62,12 @@ class Agent1Discovery:
         reports_dir = Path("reports/owasp")
         reports_dir.mkdir(parents=True, exist_ok=True)
 
-        run_cmd(
-            #"find . -path '*/target/dependency-check/*.json' -exec cp {} reports/owasp/ \\;"
-        )
+        for dep_dir in Path(".").rglob("target/dependency-check"):
+          module_name = dep_dir.parent.parent.name  # module folder
+          dest = reports_dir / module_name
+          shutil.copytree(dep_dir, dest, dirs_exist_ok=True)
+
+        print("✅ Reports collected from all module")
 
         if Path("target/dependency-check").exists():
             run_cmd("cp -r target/dependency-check/* reports/owasp/")
