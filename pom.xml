@@ -92,10 +92,10 @@
           <nvdApiKey>{env.NVD_API_KEY}</nvdApiKey>
           <knownExploitedUrl>https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json</knownExploitedUrl> 
           --> 
-          <!-- <dataDirectory>${project.directory}/nvdFiles</dataDirectory>
-          <dataDirectory>/home/nagajyothi_bheema/remediation-project/nvdFiles</dataDirectory>-->
-          <dataDirectory>${env.GITHUB_WORKSPACE}/nvdFiles</dataDirectory>
-            <aggregate>true</aggregate>
+          <!-- <dataDirectory>${project.directory}/nvdFiles</dataDirectory>-->
+          <dataDirectory>/home/nagajyothi_bheema/remediation-project/nvdFiles</dataDirectory>
+       <!--   <dataDirectory>${env.GITHUB_WORKSPACE}/nvdFiles</dataDirectory>-->
+          
             <autoUpdate>false</autoUpdate>     
             <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>      
             <formats>
