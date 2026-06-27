@@ -1,0 +1,33 @@
+name: OSS Upgrade Agent
+
+on:
+  schedule:
+    - cron: '0 7 * * *'   # 2 AM US Eastern
+  #workflow_dispatch:      # optional manual trigger
+  #push:
+  #  branches: [ main ]
+
+jobs:
+  run-agent:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install google-generativeai
+
+      - name: Run agent.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: |
+          python agent.py
