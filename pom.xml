@@ -103,7 +103,7 @@
             <format>JSON</format>
             <format>CSV</format>
             </formats>
-            <outputDirectory>${project.baseDir}/dependency-check/${project.artifactId}</outputDirectory>
+            <outputDirectory>${project.build.directory}/dependency-check</outputDirectory>
             </configuration>
            
         <executions>
