@@ -3,6 +3,7 @@ import subprocess
 import sys
 from pathlib import Path
 import json
+import shutil
 import google.generativeai as genai
 
 # -----------------------------
@@ -33,7 +34,7 @@ def init_gemini():
     genai.configure(api_key=api_key)
 
     return genai.GenerativeModel(
-        model_name="gemini-2.5-flash",  # closest available (Gemini 2.5 Flash naming may vary)
+        model_name="gemini-2.5-flash"
     )
 
 
@@ -59,18 +60,20 @@ class Agent1Discovery:
         run_cmd("mvn clean install")
         run_cmd("mvn verify org.owasp:dependency-check-maven:check")
 
+        # ✅ Collect reports properly
         reports_dir = Path("reports/owasp")
         reports_dir.mkdir(parents=True, exist_ok=True)
 
+        print("\nCollecting OWASP reports from all modules...")
+
         for dep_dir in Path(".").rglob("target/dependency-check"):
-          module_name = dep_dir.parent.parent.name  # module folder
-          dest = reports_dir / module_name
-          shutil.copytree(dep_dir, dest, dirs_exist_ok=True)
+            module_name = dep_dir.parent.parent.name
+            dest = reports_dir / module_name
 
-        print("✅ Reports collected from all module")
+            print(f"Copying {dep_dir} -> {dest}")
+            shutil.copytree(dep_dir, dest, dirs_exist_ok=True)
 
-        if Path("target/dependency-check").exists():
-            run_cmd("cp -r target/dependency-check/* reports/owasp/")
+        print("✅ Reports collected from all modules")
 
         return branch_name, base_branch
 
@@ -84,11 +87,15 @@ class Agent2Analysis:
 
     def load_report(self):
         folder = Path("reports/owasp")
-        json_files = list(folder.glob("*.json"))
+
+        # ✅ search recursively
+        json_files = list(folder.rglob("*.json"))
 
         if not json_files:
             print("No JSON report found, analysis skipped")
             return None
+
+        print(f"Using report: {json_files[0]}")
 
         with open(json_files[0]) as f:
             return json.load(f)
@@ -97,16 +104,16 @@ class Agent2Analysis:
         print("\n=== Agent 2: Gemini Analysis ===")
 
         prompt = f"""
-        Analyze this OWASP Dependency Check report and provide:
+Analyze this OWASP Dependency Check report and provide:
 
-        1. Critical vulnerabilities summary
-        2. High-risk dependencies
-        3. Suggested upgrades/fixes
-        4. Overall risk score (Low/Medium/High)
+1. Critical vulnerabilities summary
+2. High-risk dependencies
+3. Suggested upgrades/fixes
+4. Overall risk score (Low/Medium/High)
 
-        REPORT:
-        {json.dumps(report)[:15000]}
-        """
+REPORT:
+{json.dumps(report)[:15000]}
+"""
 
         response = self.model.generate_content(prompt)
         return response.text
@@ -117,6 +124,8 @@ class Agent2Analysis:
             return "No vulnerabilities found or report missing."
 
         summary = self.summarize_with_gemini(report)
+
+        Path("reports").mkdir(exist_ok=True)
 
         with open("reports/analysis_summary.md", "w") as f:
             f.write(summary)
@@ -132,7 +141,10 @@ class Agent3PR:
         print("\n=== Agent 3: PR Creation ===")
 
         run_cmd("git add .")
-        run_cmd('git commit -m "Agent: Vulnerability Report + Analysis"', check=False)
+        run_cmd(
+            'git commit -m "Agent: Vulnerability Report + Analysis"',
+            check=False,
+        )
         run_cmd(f"git push origin {branch_name}")
 
         pr_title = f"Security OSS Analysis [{base_branch}]"
@@ -167,7 +179,7 @@ class Agent3PR:
 
 
 # -----------------------------
-# MAIN ORCHESTRATION
+# MAIN
 # -----------------------------
 def main():
     print("=== Multi-Agent OSS Security System ===")
