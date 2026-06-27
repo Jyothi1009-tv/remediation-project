@@ -2,7 +2,7 @@ name: OSS Upgrade Agent
 on:
   #workflow_dispatch:
   schedule:
-    - cron: '0 2 * * *' #daily run at 2AM
+    - cron: '*/10 * * * *' #daily run at 2AM
   push:
     branches: [ main ]
 
@@ -43,6 +43,8 @@ jobs:
           git checkout -b $BRANCH_NAME
           mvn clean install
           mvn verify org.owasp:dependency-check-maven:check
+          mkdir -p reports
+          find . -path "*/target/dependency-check/*" -exec mv {} reports/owasp/
           mv target/dependency-check/* reports/owasp/
           git add .  
           git commit -m "Agent 1: Vulnerability Assessment Report"
